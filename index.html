@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&display=swap" rel="stylesheet">
+<title>🎃 Ruleta de Películas de Halloween 🎬</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <audio id="halloween-audio" autoplay loop>
+  <source src="audio/spooky.mp3" type="audio/mp3">
+  Tu navegador no soporta el elemento de audio.
+</audio>
+
+<audio id="halloween-audio" loop>
+  <source src="audio/spooky.mp3" type="audio/mp3">
+</audio>
+
+<div id="video-background">
+  <video autoplay muted loop playsinline>
+    <source src="videos/halloween_background.mp4" type="video/mp4">
+    <source src="videos/halloween_background.webm" type="video/webm">
+  </video>
+</div>
+
+<div id="video-overlay"></div>
+
+<!-- Snoopy PNGs flotantes - Ahora 10 total -->
+<div class="snoopy-png snoopy1">
+  <img src="images/snoopy_halloween1.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy2">
+  <img src="images/snoopy_halloween2.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy3">
+  <img src="images/snoopy_halloween3.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy4">
+  <img src="images/snoopy_halloween4.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy5">
+  <img src="images/snoopy_halloween5.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy6">
+  <img src="images/snoopy_halloween6.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy7">
+  <img src="images/snoopy_halloween7.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy8">
+  <img src="images/snoopy_halloween8.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy9">
+  <img src="images/snoopy_halloween9.png" alt="Snoopy">
+</div>
+<div class="snoopy-png snoopy10">
+  <img src="images/snoopy_halloween10.png" alt="Snoopy">
+</div>
+
+<div id="arrow-container" style="
+  position: absolute;
+  top: 50px; /* Ajusta según el tamaño y posición de tu canvas */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 10;
+">
+</div>
+
+<!-- Contenedor principal -->
+<div class="container">
+  <header>
+    <h1>🎃 Ruleta de Películas de Halloween 🎬</h1>
+    <p>Una película cada día... ¿Miedo? Bienvenidos a HALLOWEEN ✨</p>
+  </header>
+
+  <div id="cooldown-message"></div>
+<div id="roulette-container" style="position: relative; width: 560px; height: 555px;">
+  <div class="roulette-glow">
+    <canvas id="roulette" width="560" height="555"></canvas>
+  </div>
+
+ <div id="arrow-container" style="
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  width: 40px;
+  height: 5px;
+  pointer-events: none;
+  z-index: 10;
+">
+  <svg width="25" height="25" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20,0 0,40 40,40" fill="#fff" stroke="#000" stroke-width="2"/>
+  </svg>
+</div>
+
+</div>
+
+  <button id="spin-btn">🧟‍♀️💀 GIRAR 🎃👻</button>
+  <button id="history-btn">📜 Ver Historial ⎛⎝(`ᢍ´)⎠⎞ᵐᵘʰᵃʰᵃ</button>
+  <link rel="stylesheet" href="style.css">
+</div>
+
+<!-- Modal de película seleccionada -->
+<div id="modal">
+  <div id="modal-content">
+    <button class="modal-close" id="modal-close">×</button>
+    <img id="modal-poster" src="" alt="Póster">
+    <h2 id="modal-title"></h2>
+    <p id="modal-question">¿Veremos esta película?</p>
+    <div id="countdown-timer">5:00</div>
+    <div class="modal-buttons">
+      <button class="confirm-btn" id="confirm-btn">✅ Confirmar</button>
+      <button class="cancel-btn" id="cancel-btn">❌ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de historial -->
+<div id="history-modal">
+  <div id="history-modal-content">
+    <button class="modal-close" id="history-close">×</button>
+    <h2 style="color: #ff6600; margin-bottom: 20px;">🎬 Películas Vistas</h2>
+    <div id="history-grid"></div>
+  </div>
+</div>
+
+<div class="bats"></div>
+<div class="pumpkins"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
