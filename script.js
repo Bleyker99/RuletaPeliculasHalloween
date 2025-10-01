@@ -162,12 +162,11 @@ function checkCooldown() {
 // Dibujar la ruleta (Soporte para responsividad)
 function drawRoulette() {
     const container = document.getElementById('roulette-container');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    let size = Math.min(containerWidth, containerHeight);
-
-    if (size < 100 || size > 600) size = Math.min(window.innerWidth * 0.9, 560);
     
+    // Obtenemos el tamaño real del contenedor (calculado por CSS, que es responsivo)
+    const size = container.clientWidth;
+
+    // Ajusta las dimensiones intrínsecas del canvas al tamaño de su contenedor.
     canvas.width = size;
     canvas.height = size;
 
@@ -210,6 +209,7 @@ function drawRoulette() {
         ctx.textAlign = 'right';
         ctx.fillStyle = '#fff';
         
+        // Ajuste de tamaño de fuente basado en el número de segmentos (mejor legibilidad)
         const fontSize = Math.max(10, 18 - Math.floor(numSegments / 5)); 
         ctx.font = `bold ${fontSize}px "Nosifer", cursive`;
         
@@ -429,3 +429,4 @@ function showMovieDetail(movie) {
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+
