@@ -39,6 +39,7 @@ let watchedMovies = [];
 let currentMovie = null;
 let countdownInterval = null;
 let cooldownEnd = null;
+let audio = null; // Inicializado en DOMContentLoaded
 
 // Elementos DOM
 const canvas = document.getElementById('roulette');
@@ -52,11 +53,19 @@ const historyBtn = document.getElementById('history-btn');
 const historyModal = document.getElementById('history-modal');
 const historyClose = document.getElementById('history-close');
 const cooldownMsg = document.getElementById('cooldown-message');
+const welcomeModal = document.getElementById('welcome-modal');
+const welcomeBtn = document.getElementById('welcome-btn');
+
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+  audio = document.getElementById('halloween-audio');
+  
   loadData();
-  drawRoulette();
+  
+  // Esconder la ruleta y el botón hasta que se cierre el modal de bienvenida
+  document.getElementById('roulette-container').style.opacity = '0';
+  spinBtn.style.opacity = '0';
   
   // Event listeners
   spinBtn.addEventListener('click', spin);
@@ -66,6 +75,9 @@ document.addEventListener('DOMContentLoaded', function() {
   historyBtn.addEventListener('click', showHistory);
   historyClose.addEventListener('click', closeHistoryModal);
   
+  // Listener para el modal de Bienvenida
+  welcomeBtn.addEventListener('click', closeWelcomeModal); 
+
   // Cerrar modal al hacer clic fuera
   modal.addEventListener('click', function(e) {
     if (e.target === modal) closeModal();
@@ -74,7 +86,37 @@ document.addEventListener('DOMContentLoaded', function() {
   historyModal.addEventListener('click', function(e) {
     if (e.target === historyModal) closeHistoryModal();
   });
+  
+  // Listener para redimensionamiento (IMPORTANTE para la responsividad del canvas)
+  window.addEventListener('resize', drawRoulette);
+  
+  // Mostrar el modal de bienvenida al cargar
+  showWelcomeModal();
 });
+
+
+// Función: Mostrar modal de bienvenida
+function showWelcomeModal() {
+  welcomeModal.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; 
+}
+
+// Función: Cerrar modal de bienvenida
+function closeWelcomeModal() {
+  welcomeModal.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Iniciar audio
+  if (audio) {
+      audio.volume = 0.1; // Volumen bajo
+      audio.play().catch(e => console.log("Audio play failed:", e));
+  }
+  
+  drawRoulette(); 
+  document.getElementById('roulette-container').style.opacity = '1'; 
+  spinBtn.style.opacity = '1';
+  checkCooldown(); 
+}
 
 // Cargar datos del localStorage
 function loadData() {
@@ -83,8 +125,6 @@ function loadData() {
   cooldownEnd = saved.cooldownEnd || null;
   
   movies = allMovies.filter(m => !watchedMovies.some(w => w.es === m.es));
-  
-  checkCooldown();
 }
 
 // Guardar datos en localStorage
@@ -101,82 +141,102 @@ function checkCooldown() {
     const remaining = cooldownEnd - Date.now();
     const hours = Math.floor(remaining / 3600000);
     const minutes = Math.floor((remaining % 3600000) / 60000);
-    cooldownMsg.textContent = `⏰ Espera ${hours}h ${minutes}m para girar de nuevo`;
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    
+    cooldownMsg.innerHTML = `⏰ Espera ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} para girar de nuevo`;
     cooldownMsg.style.display = 'block';
     spinBtn.disabled = true;
-    setTimeout(checkCooldown, 60000);
+    
+    clearInterval(window.cooldownInterval);
+    window.cooldownInterval = setInterval(checkCooldown, 1000);
+
   } else {
     cooldownMsg.style.display = 'none';
     spinBtn.disabled = false;
     cooldownEnd = null;
     saveData();
+    clearInterval(window.cooldownInterval);
   }
 }
 
-// Dibujar la ruleta
+// Dibujar la ruleta (Soporte para responsividad)
 function drawRoulette() {
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 275;
-  const numSegments = movies.length;
-  
-  if (numSegments === 0) {
+    const container = document.getElementById('roulette-container');
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    let size = Math.min(containerWidth, containerHeight);
+
+    if (size < 100 || size > 600) size = Math.min(window.innerWidth * 0.9, 560);
+    
+    canvas.width = size;
+    canvas.height = size;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = size / 2 * 0.98; 
+    const numSegments = movies.length;
+    
+    if (numSegments === 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ff6600';
+      ctx.font = 'bold 20px "Creepster", cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('¡Todas las películas vistas!', centerX, centerY);
+      return;
+    }
+    
+    const arcSize = (2 * Math.PI) / numSegments;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#ff6600';
-    ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('¡Todas las películas vistas!', centerX, centerY);
-    return;
-  }
-  
-  const arcSize = (2 * Math.PI) / numSegments;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < numSegments; i++) {
+        const angle = i * arcSize;
+        const colors = ['#5f0f40', '#9a031e', '#fb8b24', '#e36414', '#0f4c5c'];
+        ctx.fillStyle = colors[i % colors.length];
 
-  for (let i = 0; i < numSegments; i++) {
-    const angle = i * arcSize;
-    const colors = ['#5f0f40', '#9a031e', '#fb8b24', '#e36414', '#0f4c5c'];
-    ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
+        ctx.closePath();
+        ctx.fill();
 
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(centerX, centerY, radius, angle, angle + arcSize);
-    ctx.closePath();
-    ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#fff';
+        
+        const fontSize = Math.max(10, 18 - Math.floor(numSegments / 5)); 
+        ctx.font = `bold ${fontSize}px "Nosifer", cursive`;
+        
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 3;
 
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(angle + arcSize / 2);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px "Nosifer", cursive';
-    ctx.shadowColor = '#000';
-    ctx.shadowBlur = 3;
-
-    let text = movies[i].es;
-    if (text.length > 25) text = text.substring(0, 22) + '...';
-    ctx.fillText(text, radius - 10, 5);
-    ctx.restore();
-  }
-
-  
+        let text = movies[i].es;
+        if (text.length > 20) text = text.substring(0, 17) + '...'; 
+        ctx.fillText(text, radius - 10, 5);
+        ctx.restore();
+    }
 }
 
 // Girar la ruleta
 function spin() {
- 
-
   if (spinBtn.disabled || movies.length === 0) return;
   
   spinBtn.disabled = true;
   let rotation = 0;
-  const finalRotation = Math.random() * 360 + 1800;
+  // Mínimo 5 vueltas (1800 deg) más un giro aleatorio
+  const finalRotation = Math.random() * 360 + 1800; 
   const duration = 4000;
   const startTime = Date.now();
+
+  if (audio) {
+      audio.volume = 0.03; // Bajar el volumen para el giro
+  }
 
   function animate() {
     const elapsed = Date.now() - startTime;
@@ -190,21 +250,51 @@ function spin() {
       requestAnimationFrame(animate);
     } else {
       selectMovie(rotation);
+      if (audio) {
+          audio.volume = 0.1; // Restaurar volumen
+      }
     }
   }
   animate();
 }
 
-  audio.volume = 0.1; // 0% del volumen máximo
-
-// Seleccionar película
+/**
+ * Función CRÍTICA: Seleccionar película
+ * CORREGIDO: Se añade +180 grados para compensar el error de desfase.
+ */
 function selectMovie(rotation) {
-  const normalizedRotation = (360 - (rotation % 360)) % 360;
-  const arcSize = 360 / movies.length;
-  const selectedIndex = Math.floor(normalizedRotation / arcSize) % movies.length;
-  
-  currentMovie = movies[selectedIndex];
-  showModal(currentMovie);
+    const numSegments = movies.length;
+    if (numSegments === 0) return;
+
+    const arcSize = 360 / numSegments;
+    
+    // 1. Normaliza la rotación a un valor entre 0 y 360 grados.
+    const normalizedRotation = rotation % 360; 
+
+    // 2. Calcula el ángulo base en el puntero (90 grados, posición superior).
+    const angleAtPointer = (360 - normalizedRotation + 90) % 360;
+
+    // 3. CORRECCIÓN DE 180 GRADOS: Sumamos 180 grados para seleccionar
+    // la película del lado opuesto, que es la que apunta la flecha.
+    const finalSelectionAngle = (angleAtPointer + 180) % 360;
+
+    // 4. Calcula el índice: 
+    const selectedIndex = Math.floor(finalSelectionAngle / arcSize);
+    
+    currentMovie = movies[selectedIndex % numSegments]; 
+    
+    // **DEBUG (Opcional): Descomenta para ver en consola el resultado**
+    /*
+    console.log(`Rotación final: ${rotation.toFixed(2)} deg`);
+    console.log(`Rotación normalizada: ${normalizedRotation.toFixed(2)} deg`);
+    console.log(`Ángulo en puntero: ${angleAtPointer.toFixed(2)} deg`);
+    console.log(`Ángulo de selección (180° offset): ${finalSelectionAngle.toFixed(2)} deg`);
+    console.log(`Tamaño de arco: ${arcSize.toFixed(2)} deg`);
+    console.log(`Índice seleccionado: ${selectedIndex}`);
+    console.log(`Película: ${currentMovie.es}`);
+    */
+    
+    showModal(currentMovie);
 }
 
 // Mostrar modal
@@ -221,7 +311,7 @@ function showModal(movie) {
   startCountdown();
 }
 
-// Cerrar modal
+// Cerrar modal 
 function closeModal() {
   modal.classList.remove('active');
   document.body.style.overflow = '';
@@ -229,8 +319,7 @@ function closeModal() {
     clearInterval(countdownInterval);
     countdownInterval = null;
   }
-  canvas.style.transform = 'rotate(0deg)';
-  spinBtn.disabled = false;
+  checkCooldown(); 
 }
 
 // Cuenta regresiva de 5 minutos
@@ -251,6 +340,7 @@ function startCountdown() {
   }
   
   updateTimer();
+  if (countdownInterval) clearInterval(countdownInterval); 
   countdownInterval = setInterval(updateTimer, 1000);
 }
 
@@ -261,7 +351,8 @@ function confirmMovie() {
   watchedMovies.push(currentMovie);
   movies = movies.filter(m => m.es !== currentMovie.es);
   
-  cooldownEnd = Date.now() + (10 * 60 * 60 * 1000);
+  // Establece el cooldown en 10 horas
+  cooldownEnd = Date.now() + (10 * 60 * 60 * 1000); 
   
   saveData();
   closeModal();
@@ -270,6 +361,22 @@ function confirmMovie() {
   
   if (movies.length === 0) {
     alert('🎉 ¡Hemos visto todas las películas! 🎉');
+  } else {
+    // Muestra un mensaje de confirmación breve en el modal
+    document.getElementById('modal-poster').src = currentMovie.poster;
+    document.getElementById('modal-title').textContent = `¡A ver ${currentMovie.es}!`;
+    document.getElementById('modal-question').textContent = "Película confirmada. El temporizador ha sido reiniciado. ¡Disfruta! 🍿";
+    document.getElementById('countdown-timer').style.display = 'none';
+    document.querySelector('.modal-buttons').style.display = 'none';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Cerrar automáticamente después de 4 segundos
+    setTimeout(() => {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        checkCooldown(); 
+    }, 4000); 
   }
 }
 
@@ -312,6 +419,7 @@ function closeHistoryModal() {
 function showMovieDetail(movie) {
   closeHistoryModal();
   
+  // Reutilizamos el modal principal para el detalle
   document.getElementById('modal-poster').src = movie.poster;
   document.getElementById('modal-title').textContent = movie.es;
   document.getElementById('modal-question').textContent = '¡Película vista! 🎃';
