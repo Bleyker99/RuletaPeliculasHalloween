@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Griffy:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Griffy:wght@400;700&display=swap');
 
 * {
   margin: 0;
@@ -10,10 +10,10 @@ body, html {
   height: 100%;
   font-family: 'Griffy', cursive;
   overflow-x: hidden;
-  background: transparent; /* Cambia de #000 a transparent */
+  background: transparent;
 }
 
-/* Video de fondo */
+/* Video de fondo y overlay */
 #video-background {
   position: fixed;
   top: 0;
@@ -21,8 +21,8 @@ body, html {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: 1; /* Cambia de -10 a 1 */
-  background: #000; /* Fallback por si no carga el GIF */
+  z-index: 1; 
+  background: #000; 
 }
 
 #video-background video {
@@ -43,502 +43,89 @@ body, html {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: -5;
+  background: rgba(0, 0, 0, 0.5); 
+  z-index: 2;
 }
 
-/* Snoopy PNGs con aparición aleatoria real */
+.modal-close {
+  position: absolute; /* CLAVE */
+  top: 15px;         /* Ajuste vertical */
+  right: 20px;       /* Ajuste horizontal */
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #ff6600;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  border-radius: 50%; /* Añadir */
+  padding: 5px 10px; /* Añadir */
+  background: rgba(255, 0, 0, 0.5); /* Añadir */
+}
+
+.modal-close:hover {
+  color: #ff3300;
+  background: rgba(255, 187, 0, 0.8); /* Cambiar en hover */
+  transform: scale(1.2); /* Efecto dinámico de escala */
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* SNOOPY ANIMACIÓN: Arreglado el problema de duplicidad, usa el mismo código */
+/* -------------------------------------------------------------------------- */
 .snoopy-png {
   position: fixed;
-  width: 140px;
-  height: 140px;
+  width: 100px; /* Reducido un poco para ser menos intrusivo, ajustable */
+  height: 100px;
   pointer-events: none;
   user-select: none;
   z-index: 5;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  opacity: 0; /* Empezar invisible */
+  opacity: 0; 
 }
 
 .snoopy-png img {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 15px rgba(255, 102, 0, 0.6));
+  filter: drop-shadow(0 0 10px rgba(255, 102, 0, 0.4));
 }
 
-/* Cada Snoopy con su animación única */
-.snoopy1 {
-  animation: teleportSnoopy1 8s infinite;
-}
-
-.snoopy2 {
-  animation: teleportSnoopy2 10s infinite;
-  animation-delay: -2s;
-}
-
-.snoopy3 {
-  animation: teleportSnoopy3 7s infinite;
-  animation-delay: -1s;
-}
-
-.snoopy4 {
-  animation: teleportSnoopy4 9s infinite;
-  animation-delay: -3s;
-}
-
-.snoopy5 {
-  animation: teleportSnoopy5 11s infinite;
-  animation-delay: -4s;
-}
-
-.snoopy6 {
-  animation: teleportSnoopy6 8.5s infinite;
-  animation-delay: -1.5s;
-}
-
-.snoopy7 {
-  animation: teleportSnoopy7 9.5s infinite;
-  animation-delay: -2.5s;
-}
-
-.snoopy8 {
-  animation: teleportSnoopy8 7.5s infinite;
-  animation-delay: -3.5s;
-}
-
-.snoopy9 {
-  animation: teleportSnoopy9 10.5s infinite;
-  animation-delay: -0.5s;
-}
-
-.snoopy10 {
-  animation: teleportSnoopy10 8.8s infinite;
-  animation-delay: -4.5s;
-}
-
-/* Animaciones de teletransporte - Aparece 2s, desaparece y cambia posición */
-
-@keyframes teleportSnoopy1 {
+/* Animación genérica de Teletransporte para evitar código repetido */
+@keyframes snoopyWaveTeleport {
   /* Invisible en posición 1 */
-  0%, 20% { 
-    opacity: 0; 
-    transform: translate(15vw, 20vh) scale(0.8); 
-  }
-  /* Aparece y anima en posición 1 por 2 segundos */
-  25% { 
-    opacity: 1; 
-    transform: translate(15vw, 20vh) scale(1) rotate(0deg); 
-  }
-  35% { 
-    opacity: 1; 
-    transform: translate(15vw, 20vh) scale(1.1) rotate(5deg); 
-  }
-  45% { 
-    opacity: 1; 
-    transform: translate(15vw, 20vh) scale(1) rotate(-3deg); 
-  }
+  0%, 20% { opacity: 0; transform: translate(var(--start-x), var(--start-y)) scale(0.8); }
+  /* Aparece rápidamente con pulso */
+  25% { opacity: 1; transform: translate(var(--start-x), var(--start-y)) scale(1.2); }
+  35% { opacity: 1; transform: translate(var(--start-x), var(--start-y)) scale(1); }
   /* Desaparece */
-  50%, 65% { 
-    opacity: 0; 
-    transform: translate(15vw, 20vh) scale(0.8); 
-  }
-  /* Aparece en posición 2 */
-  70% { 
-    opacity: 1; 
-    transform: translate(80vw, 70vh) scale(1) rotate(0deg); 
-  }
-  80% { 
-    opacity: 1; 
-    transform: translate(80vw, 70vh) scale(1.1) rotate(-8deg); 
-  }
-  90% { 
-    opacity: 1; 
-    transform: translate(80vw, 70vh) scale(1) rotate(5deg); 
-  }
+  45%, 55% { opacity: 0; transform: translate(var(--start-x), var(--start-y)) scale(0.8); }
+  
+  /* Invisible en posición 2 */
+  60%, 80% { opacity: 0; transform: translate(var(--end-x), var(--end-y)) scale(0.8); }
+  /* Aparece rápidamente con pulso */
+  85% { opacity: 1; transform: translate(var(--end-x), var(--end-y)) scale(1.2); }
+  95% { opacity: 1; transform: translate(var(--end-x), var(--end-y)) scale(1); }
   /* Desaparece y vuelve al inicio */
-  95%, 100% { 
-    opacity: 0; 
-    transform: translate(80vw, 70vh) scale(0.8); 
-  }
+  98%, 100% { opacity: 0; transform: translate(var(--end-x), var(--end-y)) scale(0.8); }
 }
 
-@keyframes teleportSnoopy2 {
-  0%, 18% { 
-    opacity: 0; 
-    transform: translate(85vw, 15vh) scale(0.8); 
-  }
-  23% { 
-    opacity: 1; 
-    transform: translate(85vw, 15vh) scale(1) rotate(0deg); 
-  }
-  33% { 
-    opacity: 1; 
-    transform: translate(85vw, 15vh) scale(1.05) rotate(-10deg); 
-  }
-  43% { 
-    opacity: 1; 
-    transform: translate(85vw, 15vh) scale(1) rotate(8deg); 
-  }
-  48%, 62% { 
-    opacity: 0; 
-    transform: translate(85vw, 15vh) scale(0.8); 
-  }
-  67% { 
-    opacity: 1; 
-    transform: translate(10vw, 80vh) scale(1) rotate(0deg); 
-  }
-  77% { 
-    opacity: 1; 
-    transform: translate(10vw, 80vh) scale(1.1) rotate(12deg); 
-  }
-  87% { 
-    opacity: 1; 
-    transform: translate(10vw, 80vh) scale(1) rotate(-5deg); 
-  }
-  92%, 100% { 
-    opacity: 0; 
-    transform: translate(10vw, 80vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy3 {
-  0%, 25% { 
-    opacity: 0; 
-    transform: translate(50vw, 10vh) scale(0.8); 
-  }
-  30% { 
-    opacity: 1; 
-    transform: translate(50vw, 10vh) scale(1) rotate(0deg); 
-  }
-  40% { 
-    opacity: 1; 
-    transform: translate(50vw, 10vh) scale(1.15) rotate(15deg); 
-  }
-  50% { 
-    opacity: 1; 
-    transform: translate(50vw, 10vh) scale(1) rotate(-12deg); 
-  }
-  55%, 70% { 
-    opacity: 0; 
-    transform: translate(50vw, 10vh) scale(0.8); 
-  }
-  75% { 
-    opacity: 1; 
-    transform: translate(25vw, 85vh) scale(1) rotate(0deg); 
-  }
-  85% { 
-    opacity: 1; 
-    transform: translate(25vw, 85vh) scale(1.08) rotate(-8deg); 
-  }
-  95% { 
-    opacity: 1; 
-    transform: translate(25vw, 85vh) scale(1) rotate(10deg); 
-  }
-  100% { 
-    opacity: 0; 
-    transform: translate(25vw, 85vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy4 {
-  0%, 22% { 
-    opacity: 0; 
-    transform: translate(5vw, 45vh) scale(0.8); 
-  }
-  27% { 
-    opacity: 1; 
-    transform: translate(5vw, 45vh) scale(1) rotate(0deg); 
-  }
-  37% { 
-    opacity: 1; 
-    transform: translate(5vw, 45vh) scale(1.1) rotate(-15deg); 
-  }
-  47% { 
-    opacity: 1; 
-    transform: translate(5vw, 45vh) scale(1) rotate(8deg); 
-  }
-  52%, 67% { 
-    opacity: 0; 
-    transform: translate(5vw, 45vh) scale(0.8); 
-  }
-  72% { 
-    opacity: 1; 
-    transform: translate(90vw, 50vh) scale(1) rotate(0deg); 
-  }
-  82% { 
-    opacity: 1; 
-    transform: translate(90vw, 50vh) scale(1.12) rotate(12deg); 
-  }
-  92% { 
-    opacity: 1; 
-    transform: translate(90vw, 50vh) scale(1) rotate(-6deg); 
-  }
-  97%, 100% { 
-    opacity: 0; 
-    transform: translate(90vw, 50vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy5 {
-  0%, 20% { 
-    opacity: 0; 
-    transform: translate(70vw, 25vh) scale(0.8); 
-  }
-  25% { 
-    opacity: 1; 
-    transform: translate(70vw, 25vh) scale(1) rotate(0deg); 
-  }
-  35% { 
-    opacity: 1; 
-    transform: translate(70vw, 25vh) scale(1.05) rotate(10deg); 
-  }
-  45% { 
-    opacity: 1; 
-    transform: translate(70vw, 25vh) scale(1) rotate(-5deg); 
-  }
-  50%, 65% { 
-    opacity: 0; 
-    transform: translate(70vw, 25vh) scale(0.8); 
-  }
-  70% { 
-    opacity: 1; 
-    transform: translate(30vw, 75vh) scale(1) rotate(0deg); 
-  }
-  80% { 
-    opacity: 1; 
-    transform: translate(30vw, 75vh) scale(1.08) rotate(-12deg); 
-  }
-  90% { 
-    opacity: 1; 
-    transform: translate(30vw, 75vh) scale(1) rotate(7deg); 
-  }
-  95%, 100% { 
-    opacity: 0; 
-    transform: translate(30vw, 75vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy6 {
-  0%, 24% { 
-    opacity: 0; 
-    transform: translate(40vw, 60vh) scale(0.8); 
-  }
-  29% { 
-    opacity: 1; 
-    transform: translate(40vw, 60vh) scale(1) rotate(0deg); 
-  }
-  39% { 
-    opacity: 1; 
-    transform: translate(40vw, 60vh) scale(1.1) rotate(8deg); 
-  }
-  49% { 
-    opacity: 1; 
-    transform: translate(40vw, 60vh) scale(1) rotate(-10deg); 
-  }
-  54%, 69% { 
-    opacity: 0; 
-    transform: translate(40vw, 60vh) scale(0.8); 
-  }
-  74% { 
-    opacity: 1; 
-    transform: translate(95vw, 85vh) scale(1) rotate(0deg); 
-  }
-  84% { 
-    opacity: 1; 
-    transform: translate(95vw, 85vh) scale(1.15) rotate(15deg); 
-  }
-  94% { 
-    opacity: 1; 
-    transform: translate(95vw, 85vh) scale(1) rotate(-8deg); 
-  }
-  99%, 100% { 
-    opacity: 0; 
-    transform: translate(95vw, 85vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy7 {
-  0%, 26% { 
-    opacity: 0; 
-    transform: translate(60vw, 40vh) scale(0.8); 
-  }
-  31% { 
-    opacity: 1; 
-    transform: translate(60vw, 40vh) scale(1) rotate(0deg); 
-  }
-  41% { 
-    opacity: 1; 
-    transform: translate(60vw, 40vh) scale(1.12) rotate(-18deg); 
-  }
-  51% { 
-    opacity: 1; 
-    transform: translate(60vw, 40vh) scale(1) rotate(10deg); 
-  }
-  56%, 71% { 
-    opacity: 0; 
-    transform: translate(60vw, 40vh) scale(0.8); 
-  }
-  76% { 
-    opacity: 1; 
-    transform: translate(8vw, 15vh) scale(1) rotate(0deg); 
-  }
-  86% { 
-    opacity: 1; 
-    transform: translate(8vw, 15vh) scale(1.06) rotate(12deg); 
-  }
-  96% { 
-    opacity: 1; 
-    transform: translate(8vw, 15vh) scale(1) rotate(-6deg); 
-  }
-  100% { 
-    opacity: 0; 
-    transform: translate(8vw, 15vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy8 {
-  0%, 28% { 
-    opacity: 0; 
-    transform: translate(35vw, 30vh) scale(0.8); 
-  }
-  33% { 
-    opacity: 1; 
-    transform: translate(35vw, 30vh) scale(1) rotate(0deg); 
-  }
-  43% { 
-    opacity: 1; 
-    transform: translate(35vw, 30vh) scale(1.08) rotate(14deg); 
-  }
-  53% { 
-    opacity: 1; 
-    transform: translate(35vw, 30vh) scale(1) rotate(-8deg); 
-  }
-  58%, 73% { 
-    opacity: 0; 
-    transform: translate(35vw, 30vh) scale(0.8); 
-  }
-  78% { 
-    opacity: 1; 
-    transform: translate(82vw, 90vh) scale(1) rotate(0deg); 
-  }
-  88% { 
-    opacity: 1; 
-    transform: translate(82vw, 90vh) scale(1.1) rotate(-10deg); 
-  }
-  98% { 
-    opacity: 1; 
-    transform: translate(82vw, 90vh) scale(1) rotate(5deg); 
-  }
-  100% { 
-    opacity: 0; 
-    transform: translate(82vw, 90vh) scale(0.8); 
-  }
-}
-
-@keyframes teleportSnoopy9 {
-  0%, 30% { 
-    opacity: 0; 
-    transform: translate(20vw, 55vh) scale(0.8); 
-  }
-  35% { 
-    opacity: 1; 
-    transform: translate(20vw, 55vh) scale(1) rotate(0deg); 
-  }
-  45% { 
-    opacity: 1; 
-    transform: translate(20vw, 55vh) scale(1.15) rotate(-12deg); 
-  }
-  55% { 
-    opacity: 1; 
-    transform: translate(20vw, 55vh) scale(1) rotate(15deg); 
-  }
-  60%, 75% { 
-    opacity: 0; 
-    transform: translate(20vw, 55vh) scale(0.8); 
-  }
-  80% { 
-    opacity: 1; 
-    transform: translate(75vw, 5vh) scale(1) rotate(0deg); 
-  }
-  90% { 
-    opacity: 1; 
-    transform: translate(75vw, 5vh) scale(1.05) rotate(8deg); 
-  }
-  100% { 
-    opacity: 0; 
-    transform: translate(75vw, 5vh) scale(0.8) rotate(-5deg); 
-  }
-}
-
-@keyframes teleportSnoopy10 {
-  0%, 23% { 
-    opacity: 0; 
-    transform: translate(90vw, 35vh) scale(0.8); 
-  }
-  28% { 
-    opacity: 1; 
-    transform: translate(90vw, 35vh) scale(1) rotate(0deg); 
-  }
-  38% { 
-    opacity: 1; 
-    transform: translate(90vw, 35vh) scale(1.1) rotate(10deg); 
-  }
-  48% { 
-    opacity: 1; 
-    transform: translate(90vw, 35vh) scale(1) rotate(-15deg); 
-  }
-  53%, 68% { 
-    opacity: 0; 
-    transform: translate(90vw, 35vh) scale(0.8); 
-  }
-  73% { 
-    opacity: 1; 
-    transform: translate(12vw, 65vh) scale(1) rotate(0deg); 
-  }
-  83% { 
-    opacity: 1; 
-    transform: translate(12vw, 65vh) scale(1.12) rotate(-8deg); 
-  }
-  93% { 
-    opacity: 1; 
-    transform: translate(12vw, 65vh) scale(1) rotate(12deg); 
-  }
-  98%, 100% { 
-    opacity: 0; 
-    transform: translate(12vw, 65vh) scale(0.8); 
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .snoopy-png { 
-    width: 100px;
-    height: 100px; 
-  }
-  
-  /* Ocultar algunos Snoopys en tablets */
-  .snoopy9, .snoopy10 {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .snoopy-png { 
-    width: 80px;
-    height: 80px; 
-  }
-  
-  /* Ocultar más Snoopys en móviles */
-  .snoopy5, .snoopy6, .snoopy7, .snoopy8, .snoopy9, .snoopy10 {
-    display: none;
-  }
-}
-
+/* Asignación de animaciones con propiedades personalizadas (CSS Variables) */
+.snoopy1 { --start-x: 10vw; --start-y: 10vh; --end-x: 80vw; --end-y: 80vh; animation: snoopyWaveTeleport 12s infinite; }
+.snoopy2 { --start-x: 90vw; --start-y: 20vh; --end-x: 15vw; --end-y: 70vh; animation: snoopyWaveTeleport 14s infinite; animation-delay: 2s; }
+.snoopy3 { --start-x: 50vw; --start-y: 5vh; --end-x: 25vw; --end-y: 90vh; animation: snoopyWaveTeleport 10s infinite; animation-delay: 4s; }
+.snoopy4 { --start-x: 5vw; --start-y: 50vh; --end-x: 90vw; --end-y: 40vh; animation: snoopyWaveTeleport 13s infinite; animation-delay: 6s; }
+.snoopy5 { --start-x: 30vw; --start-y: 30vh; --end-x: 70vw; --end-y: 60vh; animation: snoopyWaveTeleport 11s infinite; animation-delay: 8s; }
+.snoopy6 { --start-x: 70vw; --start-y: 10vh; --end-x: 30vw; --end-y: 80vh; animation: snoopyWaveTeleport 15s infinite; animation-delay: 1s; }
+.snoopy7 { --start-x: 15vw; --start-y: 85vh; --end-x: 85vw; --end-y: 15vh; animation: snoopyWaveTeleport 12.5s infinite; animation-delay: 3s; }
+.snoopy8 { --start-x: 60vw; --start-y: 75vh; --end-x: 40vw; --end-y: 25vh; animation: snoopyWaveTeleport 13.5s infinite; animation-delay: 5s; }
+.snoopy9 { --start-x: 5vw; --start-y: 5vh; --end-x: 95vw; --end-y: 95vh; animation: snoopyWaveTeleport 16s infinite; animation-delay: 7s; }
+.snoopy10 { --start-x: 95vw; --start-y: 95vh; --end-x: 5vw; --end-y: 5vh; animation: snoopyWaveTeleport 14.5s infinite; animation-delay: 9s; }
 
 /* Contenedor principal */
 .container {
   position: relative;
-  z-index: 10;
+  z-index: 100;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -546,6 +133,7 @@ body, html {
   align-items: center;
   padding: 20px;
   color: white;
+  padding-top: 100px;
 }
 
 header {
@@ -560,7 +148,7 @@ header {
 
 h1 {
   font-family: 'Creepster', cursive;
-  font-size: 2.5rem;
+  font-size: 3rem;
   color: #ff6600;
   text-shadow: 0 0 20px #ff6600;
   margin-bottom: 10px;
@@ -570,12 +158,6 @@ h1 {
 @keyframes glow {
   from { text-shadow: 0 0 20px #ff6600; }
   to { text-shadow: 0 0 30px #ff6600, 0 0 40px #ff6600; }
-}
-
-header p {
-  font-size: 1.2rem;
-  color: #ffcc99;
-  font-weight: 700;
 }
 
 /* Mensaje de cooldown */
@@ -588,19 +170,30 @@ header p {
   font-size: 1.2rem;
   font-weight: bold;
   box-shadow: 0 0 20px #ff6600;
+  text-align: center; 
 }
 
-/* Ruleta */
+/* RULETA Y FLECHA */
 #roulette-container {
   position: relative;
   margin: 20px 0;
+  /* Controla el tamaño máximo y la responsividad */
+  width: min(560px, 90vw);
+  height: min(560px, 90vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .roulette-glow {
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
   box-shadow: 0 0 50px #ff6600;
   animation: ruletteGlow 3s ease-in-out infinite alternate;
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes ruletteGlow {
@@ -609,9 +202,22 @@ header p {
 }
 
 #roulette {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.1s;
+}
+
+#arrow-container {
+  position: absolute;
+  top: 10px; /* Cerca del borde superior de la ruleta */
+  left: 50%; 
+  transform: translateX(-50%) rotate(180deg); /* Apunta al centro/abajo */
+  z-index: 150;
+  width: 25px;
+  height: 25px;
+  pointer-events: none;
 }
 
 /* Botones */
@@ -628,6 +234,7 @@ header p {
   box-shadow: 0 5px 20px rgba(255, 102, 0, 0.6);
   transition: all 0.3s;
   margin: 20px 0;
+  z-index: 100;
 }
 
 #spin-btn:hover:not(:disabled) {
@@ -645,95 +252,102 @@ header p {
 }
 
 #history-btn {
+  /* Fija a la esquina superior derecha */
+  position: fixed;
+  top: 20px;
+  right: 20px;
   background: linear-gradient(45deg, #663399, #9966cc);
   border: none;
-  padding: 20px 30px;
-  border-radius: 25px;
+  padding: 12px 25px; /* Ajustado para ser más sutil */
+  border-radius: 50px;
   color: white;
   font-weight: bold;
-  font-size: 2.1rem;
-  font-family: 'Creepster', cursive;
+  font-size: 1.2rem; /* Ajustado */
+  font-family: 'Griffy', cursive;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(102, 51, 153, 0.5);
   transition: all 0.3s;
-
-  /* 🔥 NUEVO: mover a la esquina superior derecha */
-  position: fixed;    /* o absolute si lo quieres dentro de un contenedor */
-  top: 0px;          /* distancia desde arriba */
-  right: 20px;        /* distancia desde la derecha */
-  margin: 0;          /* quita el margin-top para que no empuje hacia abajo */
-  z-index: 2000;      /* asegura que quede por encima de todo */
+  z-index: 2000; 
 }
 
-#history-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 51, 153, 0.7);
-}
-
-
-/* Modales */
-#modal, #history-modal {
+/* MODAL DE BIENVENIDA */
+#welcome-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000; 
+}
+
+#welcome-content {
+  background: linear-gradient(145deg, #4d0099, #6a00a4);
+  border-radius: 25px;
+  padding: 40px;
+  max-width: 90%;
+  width: 450px;
+  box-shadow: 0 0 70px #ff6600;
+  text-align: center;
+  color: white;
+  border: 5px solid #ff6600;
+}
+
+#welcome-title {
+  font-family: 'Creepster', cursive;
+  font-size: 2.5rem;
+  color: #ff6600;
+  text-shadow: 0 0 25px #ff6600, 0 0 5px #000;
+  margin-bottom: 15px;
+}
+
+#welcome-btn {
+  background: linear-gradient(45deg, #ff6600, #ff9900);
+  border: none;
+  padding: 15px 35px;
+  border-radius: 50px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  font-family: 'Creepster', cursive;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(255, 102, 0, 0.6);
+  transition: all 0.3s;
+}
+
+/* Modales (Película y Historial) */
+#modal, #history-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 #modal.active, #history-modal.active {
   display: flex;
-}
-/* Murciélagos volando 🦇 */
-.bats::before, .bats::after {
-  content: "🦇";
-  position: fixed;
-  font-size: 2rem;
-  animation: fly 12s linear infinite;
-  top: 10%;
-  left: -10%;
+  opacity: 1;
 }
 
-.bats::after {
-  top: 30%;
-  animation-delay: 5s;
-}
-
-@keyframes fly {
-  0% { transform: translateX(0) rotate(0deg); }
-  100% { transform: translateX(120vw) rotate(360deg); }
-}
-
-/* Calabazas flotando 🎃 */
-.pumpkins::before, .pumpkins::after {
-  content: "🎃";
-  position: fixed;
-  font-size: 2.5rem;
-  bottom: -10%;
-  animation: float 10s ease-in-out infinite;
-}
-
-.pumpkins::after {
-  left: 60%;
-  animation-delay: 3s;
-}
-
-@keyframes float {
-  0% { bottom: -10%; opacity: 0; }
-  50% { bottom: 50%; opacity: 1; }
-  100% { bottom: 110%; opacity: 0; }
-}
-
-#modal-content, #history-modal-content {
+/* Diseño del Modal Principal (ARREGLADO: botones centrados y mejor aspecto) */
+#modal-content {
   background: linear-gradient(145deg, #1a0033, #2d0a4e);
   border-radius: 25px;
   padding: 30px;
-  max-width: 500px;
+  max-width: 450px; /* Tamaño más ajustado */
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 0 50px #ff6600;
   text-align: center;
   color: white;
@@ -741,113 +355,62 @@ header p {
   border: 3px solid #ff6600;
 }
 
-#history-modal-content {
-  max-width: 800px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal-close {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  background: transparent;
-  border: none;
-  font-size: 2rem;
-  color: #ff6600;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-
-.modal-close:hover {
-  color: #ff3300;
-  transform: scale(1.2);
-}
-
 #modal-poster {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 300px; /* Ajuste de altura */
   border-radius: 15px;
   box-shadow: 0 0 30px rgba(255, 102, 0, 0.8);
-  margin: 15px 0;
+  margin: 15px auto; /* Centrado */
+  object-fit: contain;
 }
 
 #modal-title {
-  font-size: 1.8rem;
-  color: #ff6600;
-  margin: 15px 0;
-  font-weight: bold;
-  text-shadow: 0 0 15px #ff6600;
+    font-size: 2rem; /* Aumento de tamaño para mejor visualización */
 }
 
-#modal-question {
-  font-size: 1.2rem;
-  color: #ffcc99;
-  margin: 10px 0;
-}
-
-#countdown-timer {
-  font-size: 3rem;
-  color: #ff6600;
-  font-weight: bold;
-  margin: 20px 0;
-  text-shadow: 0 0 20px #ff6600;
-  animation: pulse 1s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
+/* ARREGLADO: Botones centrados y espaciados */
 .modal-buttons {
   display: flex;
-  gap: 15px;
-  justify-content: center;
-  margin-top: 20px;
+  gap: 20px; /* Espacio entre botones */
+  justify-content: center; /* Centrado horizontal */
+  margin-top: 30px;
   flex-wrap: wrap;
 }
 
 .modal-buttons button {
-  padding: 12px 30px;
-  border: none;
-  border-radius: 25px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
   font-family: 'Griffy', cursive;
-}
-
-.confirm-btn {
-  background: #28a745;
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: none;
   color: white;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.confirm-btn:hover {
-  background: #218838;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.7);
-}
+.confirm-btn { background: linear-gradient(45deg, #28a745, #1e7e34); }
+.cancel-btn { background: linear-gradient(45deg, #dc3545, #c82333); }
 
-.cancel-btn {
-  background: #dc3545;
+/* Diseño del Modal de Historial (ARREGLADO: Más grande y con scroll) */
+#history-modal-content {
+  background: linear-gradient(145deg, #1a0033, #2d0a4e);
+  border-radius: 25px;
+  padding: 30px;
+  max-width: 90%;
+  width: 700px; /* Ancho fijo para pantallas grandes */
+  max-height: 90vh; /* Altura máxima para permitir scroll */
+  overflow-y: auto; /* Scroll si el contenido es demasiado largo */
+  box-shadow: 0 0 50px #ff6600;
+  text-align: center;
   color: white;
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
+  position: relative;
+  border: 3px solid #ff6600;
 }
 
-.cancel-btn:hover {
-  background: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.7);
-}
-
-/* Historial */
+/* ARREGLADO: Historial en Grid responsiva */
 #history-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Mínimo 140px, responsivo */
   gap: 15px;
   margin-top: 20px;
 }
@@ -858,6 +421,7 @@ header p {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+  background: #333;
 }
 
 .history-item:hover {
@@ -867,271 +431,49 @@ header p {
 
 .history-item img {
   width: 100%;
-  height: 180px;
+  height: 200px; /* Altura fija para que la grid sea uniforme */
   object-fit: cover;
 }
 
 .history-item-name {
-  background: rgba(0, 0, 0, 0.8);
-  padding: 8px;
-  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 8px 5px;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #ff6600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Puntos suspensivos si el nombre es muy largo */
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2rem; /* Ligeramente más grande para tablets */
-  }
-
-  header p {
-    font-size: 1rem; /* Ajustar tamaño de párrafo en header */
-  }
-
-  #cooldown-message {
-    font-size: 1rem; /* Ajustar tamaño de fuente del mensaje de cooldown */
-    padding: 10px 15px;
-  }
-
-  #roulette-container {
-    width: 400px; /* Ajustar el ancho del contenedor de la ruleta */
-    height: 395px; /* Ajustar la altura del contenedor de la ruleta */
-    margin: 15px 0;
-  }
-
-  #roulette {
-    width: 400px; /* Ajustar el tamaño de la ruleta */
-    height: 395px;
-  }
-
-  /* Ajustar la flecha de la ruleta */
-  #roulette-container #arrow-container {
-    top: 10px; /* Ajustar posición de la flecha */
-    width: 30px;
-    height: 30px;
-  }
-
-  #roulette-container #arrow-container svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  #spin-btn {
-    padding: 12px 30px;
-    font-size: 1.8rem; /* Ajustar tamaño de fuente del botón de girar */
-  }
-
-  #history-btn {
-    padding: 15px 25px;
-    font-size: 1.6rem; /* Ajustar tamaño de fuente del botón de historial */
-    top: 10px; /* Ligeramente más abajo para no chocar con el borde */
-    right: 10px; /* Más cerca del borde */
-  }
-
-  .snoopy-png {
-    width: 100px; /* Ajustado para tablets */
-    height: 100px;
-  }
-
-  /* Ocultar algunos Snoopys en tablets para no saturar */
-  .snoopy9,
-  .snoopy10 {
-    display: none;
-  }
-
-  #history-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-  }
-
-  #modal-content,
-  #history-modal-content {
-    padding: 20px;
-    width: 95%; /* Usar más ancho disponible */
-  }
-
-  #modal-title {
-    font-size: 1.5rem;
-  }
-
-  #modal-question {
-    font-size: 1rem;
-  }
-
-  #countdown-timer {
-    font-size: 2.5rem;
-  }
-
-  .modal-buttons button {
-    padding: 10px 25px;
-    font-size: 1rem;
-  }
-
-  /* Ajustar murciélagos y calabazas */
-  .bats::before,
-  .bats::after {
-    font-size: 1.5rem;
-  }
-
-  .pumpkins::before,
-  .pumpkins::after {
-    font-size: 2rem;
-  }
+  h1 { font-size: 2.2rem; }
+  
+  .snoopy-png { width: 80px; height: 80px; }
+  .snoopy9, .snoopy10 { display: none; }
+  
+  #history-btn { font-size: 1rem; padding: 10px 20px; }
+  
+  #modal-content { max-width: 90%; }
+  
+  #history-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
 }
 
 @media (max-width: 480px) {
-  header {
-    padding: 15px; /* Reducir padding del header */
-    margin-bottom: 20px;
-  }
+  h1 { font-size: 1.8rem; }
+  
+  #roulette-container { width: 90vw; height: 90vw; }
+  
+  .snoopy-png { width: 60px; height: 60px; }
+  .snoopy5, .snoopy6, .snoopy7, .snoopy8, .snoopy9, .snoopy10 { display: none; }
 
-  h1 {
-    font-size: 1.5rem; /* Más pequeño para móviles */
-  }
-
-  header p {
-    font-size: 0.9rem;
-  }
-
-  #cooldown-message {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    margin: 15px 0;
-  }
-
-  #roulette-container {
-    width: 280px; /* Ajustar el ancho del contenedor de la ruleta */
-    height: 275px; /* Ajustar la altura del contenedor de la ruleta */
-    margin: 15px 0;
-  }
-
-  #roulette {
-    width: 280px; /* Ajustar el tamaño de la ruleta */
-    height: 275px;
-  }
-
-  /* Ajustar la flecha de la ruleta */
-  #roulette-container #arrow-container {
-    top: 5px; /* Ajustar posición de la flecha */
-    width: 25px;
-    height: 25px;
-  }
-
-  #roulette-container #arrow-container svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  #spin-btn {
-    padding: 10px 25px;
-    font-size: 1.5rem; /* Ajustar tamaño de fuente del botón de girar */
-  }
-
-  #history-btn {
-    padding: 10px 15px;
-    font-size: 1.2rem; /* Ajustar tamaño de fuente del botón de historial */
-    top: 5px; /* Más cerca del borde superior */
-    right: 5px; /* Más cerca del borde derecho */
-  }
-
-  .snoopy-png {
-    width: 80px; /* Más pequeños en móviles */
-    height: 80px;
-  }
-
-  /* Ocultar más Snoopys en móviles */
-  .snoopy5,
-  .snoopy6,
-  .snoopy7,
-  .snoopy8,
-  .snoopy9,
-  .snoopy10 {
-    display: none;
-  }
-
-  #history-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 8px;
-  }
-
-  #modal-content,
-  #history-modal-content {
-    padding: 15px;
-    width: 98%; /* Usar casi todo el ancho */
-  }
-
-  #modal-poster {
-    max-height: 250px; /* Reducir altura máxima del póster */
-  }
-
-  #modal-title {
-    font-size: 1.2rem;
-  }
-
-  #modal-question {
-    font-size: 0.9rem;
-  }
-
-  #countdown-timer {
-    font-size: 2rem;
-  }
-
-  .modal-buttons {
-    flex-direction: column; /* Apilar botones en móviles */
-    gap: 10px;
-  }
-
-  .modal-buttons button {
-    padding: 8px 20px;
-    font-size: 0.9rem;
-    width: 100%; /* Ocupar todo el ancho disponible */
-  }
-
-  /* Ajustar murciélagos y calabazas */
-  .bats::before,
-  .bats::after {
-    font-size: 1.2rem;
-  }
-
-  .pumpkins::before,
-  .pumpkins::after {
-    font-size: 1.8rem;
-  }
-}
-
-/* Media query para pantallas muy pequeñas (ej. iPhone SE) */
-@media (max-width: 375px) {
-  h1 {
-    font-size: 1.3rem;
-  }
-
-  header p {
-    font-size: 0.8rem;
-  }
-
-  #roulette-container {
-    width: 250px;
-    height: 245px;
-  }
-
-  #roulette {
-    width: 250px;
-    height: 245px;
-  }
-
-  #spin-btn {
-    font-size: 1.3rem;
-    padding: 8px 20px;
-  }
-
-  #history-btn {
-    font-size: 1rem;
-    padding: 8px 12px;
-  }
-
-  .snoopy-png {
-    width: 70px;
-    height: 70px;
-  }
+  #spin-btn { padding: 12px 30px; font-size: 1.8rem; }
+  
+  #modal-title { font-size: 1.5rem; }
+  
+  .modal-buttons button { font-size: 1rem; padding: 10px 20px; }
+  
+  #history-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
 }
